@@ -2,11 +2,25 @@ import codecs
 import csv
 import sys
 
+import yaml
 from bs4 import BeautifulSoup
 
-PRODUCTS_TO_FIND = ['RTX 3060']
-
+PRODUCTS_TO_FIND = []
 found_products = []
+
+try:
+    with open('./config.yml', 'r') as f:
+        config = yaml.safe_load(f)
+        products = config.get('products')
+
+        if products is None:
+            print('No products found in the `config.yml` file. See the README for the correct format.')
+            sys.exit(1)
+        else:
+            PRODUCTS_TO_FIND = products
+except FileNotFoundError:
+    print('File `config.yml` not found. Reference the README for more information.')
+    sys.exit(1)
 
 try:
     with codecs.open('./page.html', 'r', 'utf-8') as page:
